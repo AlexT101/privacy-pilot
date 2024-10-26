@@ -3,7 +3,11 @@ const LINK_PATTERNS = [
   { keywords: ['terms'], type: 'terms' },
   { keywords: ['user', 'agreement'], type: 'terms' },
   { keywords: ['tos'], type: 'terms' },
-  { keywords: ['privacy', 'policy'], type: 'policy' }
+  { keywords: ['privacy'], type: 'policy' },
+  { keywords: ['privacy', 'policy'], type: 'policy' },
+  { keywords: ['data', 'protection'], type: 'policy' },
+  { keywords: ['legal'], type: 'terms' },
+  { keywords: ['conditions'], type: 'terms' }
 ];
 
 // URL cleaning utility using URL API for better parsing
