@@ -7,6 +7,7 @@ interface LinkData {
   href: string;
   text: string;
   type: 'policy' | 'terms'; // Making the type more specific with literal types
+  pageTitle?: string;
 }
 
 // Define message types for better type safety
