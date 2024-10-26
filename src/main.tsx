@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { ThemeProvider } from "./components/theme-provider";
-import { IconLicense, IconLock } from '@tabler/icons-react';
+import {IconLicense, IconLock} from '@tabler/icons-react';
 
 // Define the structure of the link data with proper TypeScript interface
 interface LinkData {
@@ -134,35 +134,35 @@ const Sidebar: React.FC = () => {
           </h2>
 
           <div className="space-y-3">
-            {links.map((link, index) => (
-              <a
-                key={`${link.href}-${index}`}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block p-3 rounded-lg bg-zinc-700/50 hover:bg-zinc-700 
+          {links.map((link, index) => (
+            <a
+              key={`${link.href}-${index}`}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-3 rounded-lg bg-zinc-700/50 hover:bg-zinc-700 
                         transition-all duration-200 group"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={`
+            >
+              <div className="flex items-center space-x-3">
+                <div className={`
                   p-2 rounded-md
                   ${link.type === 'policy'
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-purple-500/20 text-purple-400'}
+                    ? 'bg-blue-500/20 text-blue-400'
+                    : 'bg-purple-500/20 text-purple-400'}
                 `}>
-                    {link.type === 'policy' ? <IconLock /> : <IconLicense />}
+                  {link.type === 'policy' ? <IconLock/> : <IconLicense/>}
+                </div>
+                <div>
+                  <div className="text-sm font-medium group-hover:text-blue-400 transition-colors">
+                    {link.pageTitle || getLinkText(link.type)} {/* Show pageTitle if available */}
                   </div>
-                  <div>
-                    <div className={`text-sm font-medium ${link.type === 'policy' ? 'group-hover:text-blue-400' : 'group-hover:text-purple-400'}  transition-colors`}>
-                      {getLinkText(link.type)}
-                    </div>
-                    <div className="text-xs text-zinc-500 truncate max-w-[200px]">
-                      {link.href}
-                    </div>
+                  <div className="text-xs text-zinc-500 truncate max-w-[200px]">
+                    {link.href}
                   </div>
                 </div>
-              </a>
-            ))}
+              </div>
+            </a>
+          ))}
           </div>
         </div>
       </div>
