@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { ThemeProvider } from "./components/theme-provider";
+
 import { IconLicense, IconLock } from '@tabler/icons-react';
 import { Progress } from "@/components/ui/progress";
 import {
@@ -205,8 +206,6 @@ const Sidebar: React.FC = () => {
           <h2 className="mfont-medium text-5xl text-center text-zinc-500"><span className="text-purple-400 font-extrabold text-6xl">97</span>/100</h2>
           <p className="mt-3 text-zinc-500 text-sm font-medium w-full text-center">TRUST FACTOR SCORE</p>
         </div>
-
-
         {links.length > 0 ? (
           <>
             <div className="mt-6 w-full">
