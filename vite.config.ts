@@ -13,7 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       path: 'path-browserify', // Use path-browserify if needed
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve("./src"),
     },
   },
   build: {
