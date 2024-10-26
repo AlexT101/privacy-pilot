@@ -31,6 +31,65 @@ interface InjectionResponse {
   error?: string;
 }
 
+const categories = {
+  "account_control": {
+    "title": "Account Control",
+    "description": "Whether users are provided with clear and accessible options to manage, update, and delete their accounts. Ensuring users have robust control over their account settings and personal data."
+  },
+  "data_collection": {
+    "title": "Data Collection",
+    "description": "The transparency and clarity regarding what personal data is collected, how it is collected, and the purposes behind it. Clear explanations of the data collection process and its usage."
+  },
+  "data_deletion": {
+    "title": "Data Deletion",
+    "description": "Whether users are given the option to request deletion of their personal data and if the process is straightforward. Ensuring ease of data removal and permanent deletion options."
+  },
+  "data_sharing": {
+    "title": "Data Sharing",
+    "description": "Specification of when, why, and with whom personal data is shared, ensuring users are informed about third-party data transfers. Limitations and transparency around data sharing practices."
+  },
+  "legal_rights": {
+    "title": "Legal Rights",
+    "description": "Outlining the legal rights users have concerning their personal data, such as access, correction, and deletion rights. Clear and comprehensive descriptions of users' legal rights."
+  },
+  "privacy_controls": {
+    "title": "Privacy Controls",
+    "description": "Availability of customizable privacy settings allowing users to control the visibility and usage of their personal data. Flexibility in privacy settings and options for granular control."
+  },
+  "security_measures": {
+    "title": "Security Measures",
+    "description": "The adequacy of security protocols, including encryption, data breach notifications, and other protective measures. Commitment to strong security practices to safeguard personal data."
+  },
+  "terms_changes": {
+    "title": "Terms Changes",
+    "description": "Whether users are informed about updates to the terms or privacy policy with advance notice. Clear communication regarding changes and allowing time for users to review."
+  },
+  "transparency": {
+    "title": "Transparency",
+    "description": "The overall clarity and openness of the policy regarding data practices, ensuring users are fully informed about how their data is handled. Transparent explanations of how data is collected, used, and shared."
+  },
+  "user_content_rights": {
+    "title": "User Content Rights",
+    "description": "How user-generated content is handled, including ownership and usage rights. Ensuring users retain ownership of their content, with platform usage rights clearly defined and limited to necessary functions."
+  }
+}
+
+const getCategoryInfo = (category: string) => {
+  // Normalize the category by converting to lowercase and removing spaces/underscores.
+  const normalizedCategory = category.toLowerCase().replace(/[_\s]+/g, '');
+
+  // Find a matching category in categoriesData using normalized keys.
+  const matchingCategory = Object.keys(categories).find(key => {
+    const normalizedKey = key.toLowerCase().replace(/[_\s]+/g, '');
+    return normalizedKey === normalizedCategory;
+  });
+
+  // Return the matched category's title and description, or fallback if not found.
+  return matchingCategory
+    ? categories[matchingCategory as keyof typeof categories]
+    : { title: category, description: "" }; // Fallback to the category name if not found.
+};
+
 interface ScoreData {
   quotes: string[];
   score: number;
@@ -45,6 +104,7 @@ const ScoreAccordion: React.FC<{ results: Results }> = ({ results }) => {
     <div className="w-full">
       {Object.keys(results.scores).map((category) => {
         const { quotes, score } = results.scores[category];
+        const { title, description } = getCategoryInfo(category); // Get the title and description
 
         return (
           <div key={category} className="w-full mb-4">
@@ -54,11 +114,12 @@ const ScoreAccordion: React.FC<{ results: Results }> = ({ results }) => {
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value={category}>
                     <AccordionTrigger className="w-full text-left">
-                      <span className="font-semibold">{category}: {score}/5</span>
+                      <span className="font-semibold">{title}: {score}/5</span>
                     </AccordionTrigger>
                     <AccordionContent>
+                      {description && <p className="text-zinc-300 mb-4">{description}</p>}
+                      <p className="text-zinc-300 mb-4 w-full underline underline-offset-4">What We Found</p>
                       <div className="w-full border-l-4 border-zinc-700 pl-3 pb-1">
-                        <p className="text-zinc-300 mb-4 w-full underline underline-offset-4">Key References</p>
                         <ul className="text-zinc-400">
                           {quotes.map((quote, index) => (
                             <li key={index} className={index !== quotes.length - 1 ? "mb-4" : ""}>
