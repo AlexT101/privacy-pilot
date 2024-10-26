@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { Button } from "@/components/ui/button";
 import { ThemeProvider } from "./components/theme-provider"
 
 // Define the structure of the link data with proper TypeScript interface
@@ -90,13 +89,14 @@ const Sidebar: React.FC = () => {
   };
 
   return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
     <div className="p-6 bg-gradient-to-b from-zinc-800 to-zinc-900 w-full h-full">
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+      <div className="mb-4 w-full">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 text-center w-full">
           TrustFactor
         </h1>
-        <p className="text-zinc-400 text-sm mt-2">
+        <p className="text-zinc-400 text-sm mt-2 w-full text-center">
           Analyze terms and privacy policies
         </p>
       </div>
