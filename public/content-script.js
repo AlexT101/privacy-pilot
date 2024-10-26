@@ -14,11 +14,17 @@ const LINK_PATTERNS = [
 ];
 
 // URL cleaning utility using URL API for better parsing
+// URL cleaning utility using URL API for better parsing
 const cleanUrl = (url) => {
   try {
     // Handle relative URLs
     const baseUrl = window.location.origin;
     const absoluteUrl = new URL(url, baseUrl);
+
+    // Remove query parameters and hash fragments
+    absoluteUrl.search = ''; // Removes ?stuff
+    absoluteUrl.hash = ''; // Removes #stuff
+
     return absoluteUrl.toString().toLowerCase();
   } catch {
     return url.toLowerCase();

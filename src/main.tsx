@@ -152,48 +152,48 @@ try {
   console.error('Failed to mount Sidebar:', error);
 }
 
-// Example API connection function
-const fetchFromApi = async (endpoint: string, params: Record<string, string>) => {
-  try {
-    // Build query string from params
-    const queryString = Object.entries(params)
-      .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
-      .join('&');
+// // Example API connection function
+// const fetchFromApi = async (endpoint: string, params: Record<string, string>) => {
+//   try {
+//     // Build query string from params
+//     const queryString = Object.entries(params)
+//       .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
+//       .join('&');
 
-    // Construct full URL
-    const url = `https://api.example.com/${endpoint}?${queryString}`;
+//     // Construct full URL
+//     const url = `https://api.example.com/${endpoint}?${queryString}`;
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+//     const response = await fetch(url, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
 
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
+//     if (!response.ok) {
+//       throw new Error(`API error: ${response.status}`);
+//     }
 
-    return await response.json();
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-    console.error('API error:', errorMessage);
-    throw err;
-  }
-};
+//     return await response.json();
+//   } catch (err) {
+//     const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+//     console.error('API error:', errorMessage);
+//     throw err;
+//   }
+// };
 
-// Usage example:
-const getApiData = async () => {
-  try {
-    const data = await fetchFromApi('endpoint', {
-      query: 'search term',
-      filter: 'active',
-    });
-    return data;
-  } catch (error) {
-    // Handle error
-    console.error(error);
-  }
-};
+// // Usage example:
+// const getApiData = async () => {
+//   try {
+//     const data = await fetchFromApi('endpoint', {
+//       query: 'search term',
+//       filter: 'active',
+//     });
+//     return data;
+//   } catch (error) {
+//     // Handle error
+//     console.error(error);
+//   }
+// };
 
 export default Sidebar;
