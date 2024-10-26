@@ -57,10 +57,11 @@ const ScoreAccordion: React.FC<{ results: Results }> = ({ results }) => {
                       <span className="font-semibold">{category}: {score}/5</span>
                     </AccordionTrigger>
                     <AccordionContent>
+                      <p className="text-zinc-300 mb-4 w-full underline underline-offset-4">Key References</p>
                       <ul className="text-zinc-400">
                         {quotes.map((quote, index) => (
                           <li key={index} className="mb-4">
-                            {quote}
+                            "{quote}"
                           </li>
                         ))}
                       </ul>
@@ -76,6 +77,16 @@ const ScoreAccordion: React.FC<{ results: Results }> = ({ results }) => {
     </div>
   );
 };
+
+interface Metadata {
+  risk_percentage: number;
+  risk_level: string;
+}
+
+interface ApiResponse {
+  scores: Results;
+  metadata: Metadata;
+}
 
 const Sidebar: React.FC = () => {
   const [links, setLinks] = useState<LinkData[]>([]);
@@ -103,32 +114,56 @@ const Sidebar: React.FC = () => {
     }
   });
 
+  //function to fetch analysis
+    // Add function to fetch analysis
+    const fetchAnalysis = async (url: string): Promise<ApiResponse> => {
+      try {
+        const response = await fetch('YOUR_API_ENDPOINT_HERE', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to fetch analysis');
+        }
+  
+        return await response.json();
+      } catch (error) {
+        console.error('Analysis fetch error:', error);
+        throw error;
+      }
+    };
+
   // Message listener setup with proper cleanup
   useEffect(() => {
     const messageListener = async (
       message: ContentScriptMessage,
-      sender: chrome.runtime.MessageSender,
+      _: chrome.runtime.MessageSender,
       sendResponse: (response: { farewell: string }) => void
     ) => {
-      console.log(
-        sender.tab
-          ? `Message from content script at: ${sender.tab.url}`
-          : "Message from the extension"
-      );
-
       if (message.action === 'sendLinks') {
-        setLinks(message.links);
+        // Fetch analysis for each link
+        const linksWithAnalysis = await Promise.all(
+          message.links.map(async (link) => {
+            try {
+              const analysis = await fetchAnalysis(link.href);
+              return { ...link, analysis };
+            } catch (error) {
+              console.error(`Failed to fetch analysis for ${link.href}:`, error);
+              return link;
+            }
+          })
+        );
+        setLinks(linksWithAnalysis);
         setError(null);
       }
-
-      // Always send a response to avoid orphaned Promise errors
       sendResponse({ farewell: "goodbye" });
     };
 
-    // Add the listener
     chrome.runtime.onMessage.addListener(messageListener);
-
-    // Cleanup function to remove the listener
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
     };
