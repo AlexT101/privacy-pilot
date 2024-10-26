@@ -298,7 +298,7 @@ const Sidebar: React.FC = () => {
                       </div>
                       <div>
                         <div className={`text-sm font-medium ${link.type === 'policy' ? 'group-hover:text-blue-400' : 'group-hover:text-purple-400'}  transition-colors`}>
-                          {getLinkText(link.type)}
+                          {link.pageTitle || getLinkText(link.type)}
                         </div>
                         <div className="text-xs text-zinc-500 truncate max-w-[200px]">
                           {link.href}
@@ -342,49 +342,5 @@ try {
 } catch (error) {
   console.error('Failed to mount Sidebar:', error);
 }
-
-// // Example API connection function
-// const fetchFromApi = async (endpoint: string, params: Record<string, string>) => {
-//   try {
-//     // Build query string from params
-//     const queryString = Object.entries(params)
-//       .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
-//       .join('&');
-
-//     // Construct full URL
-//     const url = `https://api.example.com/${endpoint}?${queryString}`;
-
-//     const response = await fetch(url, {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     });
-
-//     if (!response.ok) {
-//       throw new Error(`API error: ${response.status}`);
-//     }
-
-//     return await response.json();
-//   } catch (err) {
-//     const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-//     console.error('API error:', errorMessage);
-//     throw err;
-//   }
-// };
-
-// // Usage example:
-// const getApiData = async () => {
-//   try {
-//     const data = await fetchFromApi('endpoint', {
-//       query: 'search term',
-//       filter: 'active',
-//     });
-//     return data;
-//   } catch (error) {
-//     // Handle error
-//     console.error(error);
-//   }
-// };
 
 export default Sidebar;
