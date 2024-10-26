@@ -220,7 +220,7 @@ const Sidebar: React.FC = () => {
             TrustFactor
           </h1>
           <p className="text-zinc-400 text-sm w-full text-center">
-            analyze terms and privacy policies
+            Analyze Terms and Privacy Policies
           </p>
         </div>
 
