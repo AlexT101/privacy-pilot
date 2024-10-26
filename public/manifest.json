@@ -2,10 +2,20 @@
   "manifest_version": 3,
   "name": "TrustFactor",
   "version": "1.0",
-  "description": "Accept terms and conditions with confidence.",
-  "permissions": ["activeTab", "sidePanel"],
+  "description": "Accept the terms and conditions confidently.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
-    "service_worker": "service-worker.js" 
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_icon": "icon.png"
   },
   "side_panel": {
     "default_path": "sidebar.html"
