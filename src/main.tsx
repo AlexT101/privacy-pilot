@@ -3,6 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { ThemeProvider } from "./components/theme-provider";
 import { IconLicense, IconLock } from '@tabler/icons-react';
+import { Progress } from "@/components/ui/progress";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 // Define the structure of the link data with proper TypeScript interface
 interface LinkData {
@@ -23,10 +30,77 @@ interface InjectionResponse {
   error?: string;
 }
 
+interface ScoreData {
+  quotes: string[];
+  score: number;
+}
+
+interface Results {
+  scores: Record<string, ScoreData>;
+}
+
+const ScoreAccordion: React.FC<{ results: Results }> = ({ results }) => {
+  return (
+    <div className="w-full">
+      {Object.keys(results.scores).map((category) => {
+        const { quotes, score } = results.scores[category];
+
+        return (
+          <div key={category} className="w-full mb-4">
+            {/* Progress Bar (Always Visible) */}
+            <div className="w-full mb-2">
+              <div className="w-full flex justify-between items-center">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value={category}>
+                    <AccordionTrigger className="w-full text-left">
+                      <span className="font-semibold">{category}: {score}/5</span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="text-zinc-400">
+                        {quotes.map((quote, index) => (
+                          <li key={index} className="mb-4">
+                            {quote}
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+              <Progress value={(score / 5) * 100} className="w-full" />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const Sidebar: React.FC = () => {
   const [links, setLinks] = useState<LinkData[]>([]);
   const [isInjecting, setIsInjecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [results] = useState<Results>({
+    scores: {
+      account_control: {
+        quotes: ["exact quote 1", "exact quote 2"],
+        score: 3,  // Example score
+      },
+      data_collection: {
+        quotes: ["exact quote 1", "exact quote 2"],
+        score: 2,  // Example score
+      },
+      privacy_info: {
+        quotes: ["exact quote 1", "exact quote 2"],
+        score: 4,  // Example score
+      },
+      account_testing: {  // This could be any other unknown key
+        quotes: ["exact quote 1", "exact quote 2"],
+        score: 5,  // Example score
+      },
+      // More unknown keys can be added here
+    }
+  });
 
   // Message listener setup with proper cleanup
   useEffect(() => {
@@ -91,9 +165,9 @@ const Sidebar: React.FC = () => {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="p-6 bg-gradient-to-b from-zinc-800 to-zinc-900 w-full h-full">
+      <div className="p-6 bg-gradient-to-b from-zinc-800 to-zinc-900 w-full h-full overflow-x-hidden overflow-y-scroll flex flex-col items-center">
         {/* Header Section */}
-        <div className="mb-4 w-full">
+        <div className="mb-8 w-full">
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 text-center w-full">
             TrustFactor
           </h1>
@@ -127,44 +201,66 @@ const Sidebar: React.FC = () => {
           </div>
         )}
 
-        {/* Results Section */}
-        <div className="mt-6">
-          <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center">
-            {links.length ? 'Sources Referenced' : 'No Sources Found'}
-          </h2>
+        <div className="w-full m-2 p-6 rounded-2xl bg-zinc-800 mt-8 outline outline-1 outline-zinc-700 shadow-zinc-800 shadow-md">
+          <h2 className="mfont-medium text-5xl text-center text-zinc-500"><span className="text-purple-400 font-extrabold text-6xl">97</span>/100</h2>
+          <p className="mt-3 text-zinc-500 text-sm font-medium w-full text-center">TRUST FACTOR SCORE</p>
+        </div>
 
-          <div className="space-y-3">
-            {links.map((link, index) => (
-              <a
-                key={`${link.href}-${index}`}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block p-3 rounded-lg bg-zinc-700/50 hover:bg-zinc-700 
+
+        {links.length > 0 ? (
+          <>
+            <div className="mt-6 w-full">
+              <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center">
+                Breakdown
+              </h2>
+              <ScoreAccordion results={results} />
+            </div>
+
+
+            {/* Results Section */}
+            <div className="mt-6">
+              <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center">
+                Sources Referenced
+              </h2>
+
+              <div className="space-y-3">
+                {links.map((link, index) => (
+                  <a
+                    key={`${link.href}-${index}`}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-3 rounded-lg bg-zinc-700/50 hover:bg-zinc-700 
                         transition-all duration-200 group"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={`
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`
                   p-2 rounded-md
                   ${link.type === 'policy'
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-purple-500/20 text-purple-400'}
+                          ? 'bg-blue-500/20 text-blue-400'
+                          : 'bg-purple-500/20 text-purple-400'}
                 `}>
-                    {link.type === 'policy' ? <IconLock /> : <IconLicense />}
-                  </div>
-                  <div>
-                    <div className={`text-sm font-medium ${link.type === 'policy' ? 'group-hover:text-blue-400' : 'group-hover:text-purple-400'}  transition-colors`}>
-                      {getLinkText(link.type)}
+                        {link.type === 'policy' ? <IconLock /> : <IconLicense />}
+                      </div>
+                      <div>
+                        <div className={`text-sm font-medium ${link.type === 'policy' ? 'group-hover:text-blue-400' : 'group-hover:text-purple-400'}  transition-colors`}>
+                          {getLinkText(link.type)}
+                        </div>
+                        <div className="text-xs text-zinc-500 truncate max-w-[200px]">
+                          {link.href}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-xs text-zinc-500 truncate max-w-[200px]">
-                      {link.href}
-                    </div>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <h2 className="text-zinc-400 text-md font-medium mb-3 w-full text-center mt-8">
+            No Content Scanned
+          </h2>
+        )}
       </div>
     </ThemeProvider>
   );
