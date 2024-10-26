@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { ThemeProvider } from "./components/theme-provider"
+import { ThemeProvider } from "./components/theme-provider";
+import { IconLicense, IconLock } from '@tabler/icons-react';
 
 // Define the structure of the link data with proper TypeScript interface
 interface LinkData {
@@ -96,7 +97,7 @@ const Sidebar: React.FC = () => {
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 text-center w-full">
             TrustFactor
           </h1>
-          <p className="text-zinc-400 text-sm mt-2 w-full text-center">
+          <p className="text-zinc-400 text-sm w-full text-center">
             Analyze terms and privacy policies
           </p>
         </div>
@@ -128,8 +129,8 @@ const Sidebar: React.FC = () => {
 
         {/* Results Section */}
         <div className="mt-6">
-          <h2 className="text-zinc-400 text-sm font-medium mb-3">
-            {links.length ? 'Found Links' : 'No links detected'}
+          <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center">
+            {links.length ? 'Sources Referenced' : 'No Sources Found'}
           </h2>
 
           <div className="space-y-3">
@@ -149,10 +150,10 @@ const Sidebar: React.FC = () => {
                       ? 'bg-blue-500/20 text-blue-400'
                       : 'bg-purple-500/20 text-purple-400'}
                 `}>
-                    {link.type === 'policy' ? '🔒' : '📜'}
+                    {link.type === 'policy' ? <IconLock /> : <IconLicense />}
                   </div>
                   <div>
-                    <div className="text-sm font-medium group-hover:text-blue-400 transition-colors">
+                    <div className={`text-sm font-medium ${link.type === 'policy' ? 'group-hover:text-blue-400' : 'group-hover:text-purple-400'}  transition-colors`}>
                       {getLinkText(link.type)}
                     </div>
                     <div className="text-xs text-zinc-500 truncate max-w-[200px]">
