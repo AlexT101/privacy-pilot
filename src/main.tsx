@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import { Button } from "@/components/ui/button";
+import { ThemeProvider } from "./components/theme-provider"
 
 // Define the structure of the link data with proper TypeScript interface
 interface LinkData {
@@ -175,6 +177,7 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
     </div>
+    </ThemeProvider>
   );
 };
 
