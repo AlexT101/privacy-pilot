@@ -1,7 +1,6 @@
 // Constants for pattern matching
 const LINK_PATTERNS = [
-  { keywords: ['terms', 'conditions'], type: 'terms' },
-  { keywords: ['terms', 'use'], type: 'terms' },
+  { keywords: ['terms'], type: 'terms' },
   { keywords: ['user', 'agreement'], type: 'terms' },
   { keywords: ['tos'], type: 'terms' },
   { keywords: ['privacy', 'policy'], type: 'policy' }
@@ -59,6 +58,11 @@ const extractLinks = () => {
     .reduce((acc, { href, text, element }) => {
       try {
         const cleanedHref = cleanUrl(href);
+
+        // Skip chrome-extension URLs
+        if (href.startsWith('chrome-extension://')) {
+          return acc;
+        }
         
         // Skip if we've seen this URL before
         if (seenUrls.has(cleanedHref)) {
@@ -68,9 +72,11 @@ const extractLinks = () => {
         // Check both href and text against patterns
         for (const pattern of LINK_PATTERNS) {
           if (
+            (
             matchPattern(cleanedHref, pattern) ||
             matchPattern(text, pattern) ||
             matchPattern(element.getAttribute('aria-label') || '', pattern)
+            ) && cleanedHref.trim().length > 2
           ) {
             seenUrls.add(cleanedHref);
             acc.push({

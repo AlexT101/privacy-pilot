@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
+import './index.css';
 
 // Define the structure of the link data with proper TypeScript interface
 interface LinkData {
@@ -86,8 +87,8 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Links on Page</h1>
+    <div className="p-4 bg-zinc-800 w-full h-full">
+      <h1 className="text-3xl font-bold text-zinc-50 mb-8">Linked on Page</h1>
       
       <button
         onClick={injectScript}
@@ -108,7 +109,7 @@ const Sidebar: React.FC = () => {
       )}
 
       {links.length === 0 ? (
-        <p className="mt-4 text-gray-600">No links found</p>
+        <p className="mt-4 text-blue-600">No links found</p>
       ) : (
         <ul className="mt-4 space-y-2">
           {links.map((link, index) => (
