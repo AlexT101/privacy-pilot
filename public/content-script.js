@@ -66,47 +66,59 @@ const extractLinks = () => {
   return links
     .filter(link => {
       try {
-        new URL(link.href); // Validate URL
+        new URL(link.href);
         return true;
       } catch {
         return false;
       }
     })
-    .map(link => ({
-      href: link.href,
-      text: link.textContent?.trim() || link.href,
-      element: link
-    }))
-    .reduce((acc, { href, text, element }) => {
+    .map(link => {
+      // Get the title from the linked page
+      let pageTitle = '';
+      try {
+        // First try to get title from the link's title attribute
+        pageTitle = link.getAttribute('title') || 
+                   // Then try aria-label
+                   link.getAttribute('aria-label') || 
+                   // Finally use the link text itself
+                   link.textContent?.trim() || 
+                   // Fallback to document title if nothing else works
+                   document.title || 
+                   'Untitled Page';
+      } catch {
+        pageTitle = 'Untitled Page';
+      }
+
+      return {
+        href: link.href,
+        text: link.textContent?.trim() || link.href,
+        element: link,
+        pageTitle: pageTitle
+      };
+    })
+    .reduce((acc, { href, text, element, pageTitle }) => {
       try {
         const cleanedHref = cleanUrl(href);
 
-        // Skip chrome-extension URLs
-        if (href.startsWith('chrome-extension://')) {
-          return acc;
-        }
-        
-        // Skip if we've seen this URL before
-        if (seenUrls.has(cleanedHref)) {
+        if (href.startsWith('chrome-extension://') || seenUrls.has(cleanedHref)) {
           return acc;
         }
 
-        // Check both href and text against patterns
         for (const pattern of LINK_PATTERNS) {
           if (
-            (
-            matchPattern(cleanedHref, pattern) ||
+            (matchPattern(cleanedHref, pattern) ||
             matchPattern(text, pattern) ||
-            matchPattern(element.getAttribute('aria-label') || '', pattern)
-            ) && cleanedHref.trim().length > 2
+            matchPattern(element.getAttribute('aria-label') || '', pattern)) &&
+            cleanedHref.trim().length > 2
           ) {
             seenUrls.add(cleanedHref);
             acc.push({
               href: cleanedHref,
               text,
-              type: pattern.type
+              type: pattern.type,
+              pageTitle
             });
-            break; // Stop checking patterns once we find a match
+            break;
           }
         }
 
