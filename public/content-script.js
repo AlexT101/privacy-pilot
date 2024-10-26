@@ -7,17 +7,21 @@ const LINK_PATTERNS = [
   { keywords: ['privacy', 'policy'], type: 'policy' },
   { keywords: ['data', 'protection'], type: 'policy' },
   { keywords: ['legal'], type: 'terms' },
-  { keywords: ['conditions'], type: 'terms' }
+  { keywords: ['conditions'], type: 'terms' },
+  { keywords: ['datenschutz'], type: 'policy' },
+  { keywords: ['cookie', 'policy'], type: 'policy' },
+  { keywords: ['terms', 'service'], type: 'terms' }
 ];
 
 // URL cleaning utility using URL API for better parsing
 const cleanUrl = (url) => {
   try {
-    const urlObj = new URL(url);
-    return `${urlObj.protocol}//${urlObj.hostname}${urlObj.pathname}`.toLowerCase();
+    // Handle relative URLs
+    const baseUrl = window.location.origin;
+    const absoluteUrl = new URL(url, baseUrl);
+    return absoluteUrl.toString().toLowerCase();
   } catch {
-    // If URL parsing fails, fall back to basic string cleaning
-    return url.split('#')[0].split('?')[0].toLowerCase();
+    return url.toLowerCase();
   }
 };
 
@@ -54,6 +58,14 @@ const extractLinks = () => {
   const matchPattern = createPatternMatcher();
 
   return links
+    .filter(link => {
+      try {
+        new URL(link.href); // Validate URL
+        return true;
+      } catch {
+        return false;
+      }
+    })
     .map(link => ({
       href: link.href,
       text: link.textContent?.trim() || link.href,
@@ -159,8 +171,11 @@ function debounce(func, wait) {
 
 // Optional: Re-scan for links when dynamic content is loaded
 const observer = new MutationObserver(debounce(() => {
-  init();
-}, 1000));
+  const newLinks = extractLinks();
+  if (newLinks.length > 0) {
+    sendLinksWithRetry(newLinks);
+  }
+}, 500)); // Reduced from 1000ms to 500ms for better responsiveness
 
 observer.observe(document.body, {
   childList: true,
