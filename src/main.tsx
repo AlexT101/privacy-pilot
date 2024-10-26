@@ -87,48 +87,96 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-zinc-800 w-full h-full">
-      <h1 className="text-3xl font-bold text-zinc-50 mb-8">Linked on Page</h1>
-      
+    <div className="p-6 bg-gradient-to-b from-zinc-800 to-zinc-900 w-full h-full">
+      {/* Header Section */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+          TrustFactor
+        </h1>
+        <p className="text-zinc-400 text-sm mt-2">
+          Analyze terms and privacy policies
+        </p>
+      </div>
+
+      {/* Scan Button */}
       <button
         onClick={injectScript}
         disabled={isInjecting}
-        className={`px-4 py-2 rounded ${
-          isInjecting 
-            ? 'bg-gray-300 cursor-not-allowed' 
-            : 'bg-blue-500 hover:bg-blue-600 text-white'
-        }`}
+        className={`
+          w-full px-4 py-3 rounded-lg font-medium
+          transition-all duration-200 transform hover:scale-[1.02]
+          ${isInjecting 
+            ? 'bg-zinc-700 cursor-not-allowed' 
+            : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:shadow-lg hover:shadow-blue-500/20'
+          }
+        `}
       >
-        {isInjecting ? 'Scanning...' : 'Scan for Links'}
+        <div className="flex items-center justify-center space-x-2">
+          {isInjecting ? (
+            <>
+              <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+              <span>Scanning Page...</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <span>Scan for Links</span>
+            </>
+          )}
+        </div>
       </button>
 
+      {/* Error Display */}
       {error && (
-        <div className="mt-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
 
-      {links.length === 0 ? (
-        <p className="mt-4 text-blue-600">No links found</p>
-      ) : (
-        <ul className="mt-4 space-y-2">
+      {/* Results Section */}
+      <div className="mt-6">
+        <h2 className="text-zinc-400 text-sm font-medium mb-3">
+          {links.length ? 'Found Links' : 'No links detected'}
+        </h2>
+        
+        <div className="space-y-3">
           {links.map((link, index) => (
-            <li key={`${link.href}-${index}`}>
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:text-blue-600 underline"
-              >
-                {getLinkText(link.type)}
-              </a>
-            </li>
+            <a
+              key={`${link.href}-${index}`}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-3 rounded-lg bg-zinc-700/50 hover:bg-zinc-700 
+                        transition-all duration-200 group"
+            >
+              <div className="flex items-center space-x-3">
+                <div className={`
+                  p-2 rounded-md
+                  ${link.type === 'policy' 
+                    ? 'bg-blue-500/20 text-blue-400' 
+                    : 'bg-purple-500/20 text-purple-400'}
+                `}>
+                  {link.type === 'policy' ? '🔒' : '📜'}
+                </div>
+                <div>
+                  <div className="text-sm font-medium group-hover:text-blue-400 transition-colors">
+                    {getLinkText(link.type)}
+                  </div>
+                  <div className="text-xs text-zinc-500 truncate max-w-[200px]">
+                    {link.href}
+                  </div>
+                </div>
+              </div>
+            </a>
           ))}
-        </ul>
-      )}
+        </div>
+      </div>
     </div>
   );
 };
+
 
 // Mount the Sidebar component with error boundary
 const mountSidebar = () => {
