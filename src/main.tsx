@@ -57,14 +57,16 @@ const ScoreAccordion: React.FC<{ results: Results }> = ({ results }) => {
                       <span className="font-semibold">{category}: {score}/5</span>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-zinc-300 mb-4 w-full underline underline-offset-4">Key References</p>
-                      <ul className="text-zinc-400">
-                        {quotes.map((quote, index) => (
-                          <li key={index} className="mb-4">
-                            "{quote}"
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="w-full border-l-4 border-zinc-700 pl-3 pb-1">
+                        <p className="text-zinc-300 mb-4 w-full underline underline-offset-4">Key References</p>
+                        <ul className="text-zinc-400">
+                          {quotes.map((quote, index) => (
+                            <li key={index} className={index !== quotes.length - 1 ? "mb-4" : ""}>
+                              "{quote}"
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -77,6 +79,16 @@ const ScoreAccordion: React.FC<{ results: Results }> = ({ results }) => {
     </div>
   );
 };
+
+function calculateTotalScore(results: Results): number {
+  const scores = Object.values(results.scores);
+  const totalScores = scores.reduce((sum, scoreData) => sum + scoreData.score, 0);
+  const maxPossibleScore = scores.length * 5;
+  const percentageScore = (totalScores / maxPossibleScore) * 100;
+
+  return Math.round(percentageScore);
+}
+
 
 interface Metadata {
   risk_percentage: number;
@@ -115,27 +127,27 @@ const Sidebar: React.FC = () => {
   });
 
   //function to fetch analysis
-    // Add function to fetch analysis
-    const fetchAnalysis = async (url: string): Promise<ApiResponse> => {
-      try {
-        const response = await fetch('YOUR_API_ENDPOINT_HERE', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url }),
-        });
-  
-        if (!response.ok) {
-          throw new Error('Failed to fetch analysis');
-        }
-  
-        return await response.json();
-      } catch (error) {
-        console.error('Analysis fetch error:', error);
-        throw error;
+  // Add function to fetch analysis
+  const fetchAnalysis = async (url: string): Promise<ApiResponse> => {
+    try {
+      const response = await fetch('YOUR_API_ENDPOINT_HERE', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch analysis');
       }
-    };
+
+      return await response.json();
+    } catch (error) {
+      console.error('Analysis fetch error:', error);
+      throw error;
+    }
+  };
 
   // Message listener setup with proper cleanup
   useEffect(() => {
@@ -208,7 +220,7 @@ const Sidebar: React.FC = () => {
             TrustFactor
           </h1>
           <p className="text-zinc-400 text-sm w-full text-center">
-            Analyze terms and privacy policies
+            analyze terms and privacy policies
           </p>
         </div>
 
@@ -237,12 +249,20 @@ const Sidebar: React.FC = () => {
           </div>
         )}
 
-        <div className="w-full m-2 p-6 rounded-2xl bg-zinc-800 mt-8 outline outline-1 outline-zinc-700 shadow-zinc-800 shadow-md">
-          <h2 className="mfont-medium text-5xl text-center text-zinc-500"><span className="text-purple-400 font-extrabold text-6xl">97</span>/100</h2>
-          <p className="mt-3 text-zinc-500 text-sm font-medium w-full text-center">TRUST FACTOR SCORE</p>
-        </div>
         {links.length > 0 ? (
           <>
+
+            <div className="w-full m-2 p-6 rounded-2xl bg-zinc-800 mt-8 outline outline-1 outline-zinc-700 shadow-zinc-800 shadow-md">
+
+              <h2 className="font-medium text-5xl text-center text-zinc-500">
+                <span className={`
+                  font-extrabold text-6xl ${calculateTotalScore(results) <= 40 ? "text-red-500" : calculateTotalScore(results) <= 80 ? "text-blue-600" : "text-purple-500"}`}>
+                  {calculateTotalScore(results)}
+                </span>/100
+              </h2>
+              <p className="mt-3 text-zinc-500 text-sm font-medium w-full text-center">TRUST FACTOR SCORE</p>
+            </div>
+
             <div className="mt-6 w-full">
               <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center">
                 Breakdown
