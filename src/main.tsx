@@ -141,6 +141,10 @@ const ScoreAccordion: React.FC<{ results: Results }> = ({ results }) => {
   );
 };
 
+function cutoff(input: string): string {
+  return input.split('-')[0].trim();
+}
+
 function calculateTotalScore(results: Results): number {
   const scores = Object.values(results.scores);
   const totalScores = scores.reduce((sum, scoreData) => sum + scoreData.score, 0);
@@ -311,13 +315,6 @@ const Sidebar: React.FC = () => {
           </div>
         </button>
 
-        {/*Title*/}
-        {currentTabTitle && (
-          <div className="mt-4 w-full text-center">
-            <p className="text-zinc-400 text-sm font-medium">{currentTabTitle}</p>
-          </div>
-        )}
-
         {/* Error Display */}
         {error && (
           <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
@@ -328,7 +325,14 @@ const Sidebar: React.FC = () => {
         {links.length > 0 ? api ? (
           <>
 
-            <div className="w-full m-2 p-6 rounded-2xl bg-zinc-800 mt-8 outline outline-1 outline-zinc-700 shadow-zinc-800 shadow-md">
+            {/*Title*/}
+            {currentTabTitle && (
+              <div className="mt-8 w-full text-center">
+                <p className="text-zinc-400 text-lg font-lg">{cutoff(currentTabTitle)}</p>
+              </div>
+            )}
+
+            <div className="w-full m-2 p-6 rounded-2xl bg-zinc-800 mt-4 outline outline-1 outline-zinc-700 shadow-zinc-800 shadow-md">
 
               <h2 className="font-medium text-5xl text-center text-zinc-500">
                 <span className={`
@@ -388,7 +392,7 @@ const Sidebar: React.FC = () => {
           </>
         ) : (
           <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center mt-8">
-            Loading Data...
+            {links.length > 0 ? "Scanning " + links.length + " Detected Legal Pages..." : "Loading Data..."}
           </h2>
         ) : (
           <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center mt-8">
