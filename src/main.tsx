@@ -154,6 +154,7 @@ const Sidebar: React.FC = () => {
   const [links, setLinks] = useState<LinkData[]>([]);
   const [isInjecting, setIsInjecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [api, setApi] = useState<boolean>(false);
   const [results, setResults] = useState<Results>({
     scores: {
       account_control: {
@@ -183,6 +184,7 @@ const Sidebar: React.FC = () => {
       sendResponse: (response: { farewell: string }) => void
     ) => {
       if (message.action === 'sendLinks') {
+        setApi(false);
         setLinks(message.links);
         setError(null);
   
@@ -219,6 +221,7 @@ const Sidebar: React.FC = () => {
   
           // Update the results with the parsed data
           setResults(result);
+          setApi(true);
         } catch (error) {
           // Handle errors
           if (error instanceof Error) {
@@ -308,7 +311,7 @@ const Sidebar: React.FC = () => {
           </div>
         )}
 
-        {links.length > 0 ? (
+        {links.length > 0 ? api ? (
           <>
 
             <div className="w-full m-2 p-6 rounded-2xl bg-zinc-800 mt-8 outline outline-1 outline-zinc-700 shadow-zinc-800 shadow-md">
@@ -370,7 +373,11 @@ const Sidebar: React.FC = () => {
             </div>
           </>
         ) : (
-          <h2 className="text-zinc-400 text-md font-medium mb-3 w-full text-center mt-8">
+          <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center mt-8">
+            Loading Data...
+          </h2>
+        ) : (
+          <h2 className="text-zinc-400 text-lg font-medium mb-3 w-full text-center mt-8">
             No Content Scanned
           </h2>
         )}
