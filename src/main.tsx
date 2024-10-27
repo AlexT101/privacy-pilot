@@ -150,22 +150,11 @@ function calculateTotalScore(results: Results): number {
   return Math.round(percentageScore);
 }
 
-
-interface Metadata {
-  risk_percentage: number;
-  risk_level: string;
-}
-
-interface ApiResponse {
-  scores: Results;
-  metadata: Metadata;
-}
-
 const Sidebar: React.FC = () => {
   const [links, setLinks] = useState<LinkData[]>([]);
   const [isInjecting, setIsInjecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [results] = useState<Results>({
+  const [results, setResults] = useState<Results>({
     scores: {
       account_control: {
         quotes: ["exact quote 1", "exact quote 2"],
@@ -187,30 +176,6 @@ const Sidebar: React.FC = () => {
     }
   });
 
-  //function to fetch analysis
-  // Add function to fetch analysis
-  const fetchAnalysis = async (url: string): Promise<ApiResponse> => {
-    try {
-      const response = await fetch('YOUR_API_ENDPOINT_HERE', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch analysis');
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Analysis fetch error:', error);
-      throw error;
-    }
-  };
-
-  // Message listener setup with proper cleanup
   useEffect(() => {
     const messageListener = async (
       message: ContentScriptMessage,
@@ -218,29 +183,62 @@ const Sidebar: React.FC = () => {
       sendResponse: (response: { farewell: string }) => void
     ) => {
       if (message.action === 'sendLinks') {
-        // Fetch analysis for each link
-        const linksWithAnalysis = await Promise.all(
-          message.links.map(async (link) => {
-            try {
-              const analysis = await fetchAnalysis(link.href);
-              return { ...link, analysis };
-            } catch (error) {
-              console.error(`Failed to fetch analysis for ${link.href}:`, error);
-              return link;
-            }
-          })
-        );
-        setLinks(linksWithAnalysis);
+        setLinks(message.links);
         setError(null);
+  
+        try {
+          // Extract hrefs from links array
+          const hrefs = message.links.slice(0, 3).map(link => link.href);
+  
+          // Determine the API endpoint based on the number of URLs
+          const API_URL = "https://web-wfvju8ah86e5.up-de-fra1-k8s-1.apps.run-on-seenode.com/"; // Replace with your actual API URL
+          let apiEndpoint;
+
+          if (hrefs.length === 1) {
+            apiEndpoint = `${API_URL}url/${encodeURIComponent(hrefs[0])}`;
+          } else {
+            const combinedHrefs = hrefs.map(href => encodeURIComponent(href)).join('||');
+            apiEndpoint = `${API_URL}urls/${combinedHrefs}`;
+          }
+
+          console.log(apiEndpoint);
+  
+          // Make the API call
+          const response = await fetch(apiEndpoint, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+  
+          // Parse the JSON response
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const result = await response.json();
+  
+          // Update the results with the parsed data
+          setResults(result);
+        } catch (error) {
+          // Handle errors
+          if (error instanceof Error) {
+            setError(error.message); // If error is an instance of Error, access its message
+          } else {
+            setError(String(error)); // If it's not an instance of Error, just convert it to a string
+          }
+        }
       }
       sendResponse({ farewell: "goodbye" });
     };
-
+  
+    // Set up the message listener
     chrome.runtime.onMessage.addListener(messageListener);
+  
+    // Cleanup on component unmount
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
     };
-  }, []);
+  }, []);  
 
   // Inject script handler with proper error handling
   const injectScript = useCallback(async () => {
