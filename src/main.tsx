@@ -187,11 +187,11 @@ const Sidebar: React.FC = () => {
         setApi(false);
         setLinks(message.links);
         setError(null);
-  
+
         try {
           // Extract hrefs from links array
           const hrefs = message.links.slice(0, 3).map(link => link.href);
-  
+
           // Determine the API endpoint based on the number of URLs
           const API_URL = "https://web-wfvju8ah86e5.up-de-fra1-k8s-1.apps.run-on-seenode.com/"; // Replace with your actual API URL
           let apiEndpoint;
@@ -204,7 +204,7 @@ const Sidebar: React.FC = () => {
           }
 
           console.log(apiEndpoint);
-  
+
           // Make the API call
           const response = await fetch(apiEndpoint, {
             method: 'GET',
@@ -212,17 +212,18 @@ const Sidebar: React.FC = () => {
               'Content-Type': 'application/json',
             },
           });
-  
+
           // Parse the JSON response
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const result = await response.json();
-  
+
           // Update the results with the parsed data
           setResults(result);
           setApi(true);
         } catch (error) {
+          setApi(false);
           // Handle errors
           if (error instanceof Error) {
             setError(error.message); // If error is an instance of Error, access its message
@@ -233,15 +234,15 @@ const Sidebar: React.FC = () => {
       }
       sendResponse({ farewell: "goodbye" });
     };
-  
+
     // Set up the message listener
     chrome.runtime.onMessage.addListener(messageListener);
-  
+
     // Cleanup on component unmount
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
     };
-  }, []);  
+  }, []);
 
   // Inject script handler with proper error handling
   const injectScript = useCallback(async () => {
