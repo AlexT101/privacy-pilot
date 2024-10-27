@@ -1,6 +1,8 @@
 # PrivacyPilot
 
-This is the frontend repo for Privacy Pilot, a Google Chrome extension built for AI ATL. This extension enables you to analyze a website's Terms and Conditions and Privacy Policy in a single click. 
+Tired of not knowing what you're signing up for? Privacy Pilot scans any website on the internet in the click of a button. We find and analyze all relevant legal information for you so you can accept any Terms & Conditions or Privacy Policy agreement with confidence. Our Chrome Extension provides a convenient sidebar next to the website you're browsing so you can pull up all relevant information without even leaving the page. Plus, our fully anonymized platform never collects your personal data and only runs when you want it to.
+
+This is the frontend repo for our project built for AI ATL 2024.
 
 ## Technologies Used
 
