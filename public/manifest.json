@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TrustFactor",
+  "name": "PrivacyPilot",
   "version": "1.0",
-  "description": "Accept the terms and conditions confidently.",
+  "description": "Accept terms and conditions confidently.",
   "permissions": [
     "activeTab",
     "scripting",

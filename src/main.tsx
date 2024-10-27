@@ -279,7 +279,7 @@ const Sidebar: React.FC = () => {
         {/* Header Section */}
         <div className="mb-8 w-full">
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 text-center w-full">
-            TrustFactor
+            PrivacyPilot
           </h1>
           <p className="text-zinc-400 text-sm w-full text-center">
             Analyze Terms and Privacy Policies
@@ -318,11 +318,11 @@ const Sidebar: React.FC = () => {
 
               <h2 className="font-medium text-5xl text-center text-zinc-500">
                 <span className={`
-                  font-extrabold text-6xl ${calculateTotalScore(results) <= 40 ? "text-red-500" : calculateTotalScore(results) <= 80 ? "text-blue-600" : "text-purple-500"}`}>
+                  font-extrabold text-6xl ${calculateTotalScore(results) <= 60 ? "text-red-500" : calculateTotalScore(results) <= 80 ? "text-blue-600" : "text-purple-500"}`}>
                   {calculateTotalScore(results)}
                 </span>/100
               </h2>
-              <p className="mt-3 text-zinc-500 text-sm font-medium w-full text-center">TRUST FACTOR SCORE</p>
+              <p className="mt-3 text-zinc-500 text-sm font-medium w-full text-center">PRIVACY PILOT SCORE</p>
             </div>
 
             <div className="mt-6 w-full">

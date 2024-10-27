@@ -10,7 +10,7 @@ const Progress = React.forwardRef<
   let progressColor = "bg-purple-500"; // Default color if value > 80
 
   if (value != undefined) {
-    if (value <= 40) {
+    if (value <= 50) {
       progressColor = "bg-red-500";
     } else if (value <= 80) {
       progressColor = "bg-blue-600";
