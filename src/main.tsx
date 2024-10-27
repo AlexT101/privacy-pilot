@@ -155,6 +155,7 @@ const Sidebar: React.FC = () => {
   const [isInjecting, setIsInjecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [api, setApi] = useState<boolean>(false);
+  const [currentTabTitle, setCurrentTabTitle] = useState<string>("");
   const [results, setResults] = useState<Results>({
     scores: {
       account_control: {
@@ -250,6 +251,11 @@ const Sidebar: React.FC = () => {
     setError(null);
 
     try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab.title) {
+        setCurrentTabTitle(tab.title);
+      }
+
       const response = await chrome.runtime.sendMessage<
         { action: 'injectContentScript' },
         InjectionResponse
@@ -304,6 +310,13 @@ const Sidebar: React.FC = () => {
             <span className="text-zinc-50 font-bold text-xl">Scan Terms and Policies</span>
           </div>
         </button>
+
+        {/*Title*/}
+        {currentTabTitle && (
+          <div className="mt-4 w-full text-center">
+            <p className="text-zinc-400 text-sm font-medium">{currentTabTitle}</p>
+          </div>
+        )}
 
         {/* Error Display */}
         {error && (
